@@ -1,5 +1,5 @@
 $lobster: bisque;
-$red: red;
+$border: red;
 
 body{
 	background-color: $lobster;
@@ -10,9 +10,13 @@ h1{
 }
 
 .main-container {
+  border: 2px dashed $border;
 }
 
+.searchBox {
+  margin-top: 9px;
+}
 
-.search-bar-spacing{
-	margin-bottom: 20px;
+.auth-form input{
+  display: block;
 }

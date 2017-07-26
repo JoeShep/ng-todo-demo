@@ -1,56 +1,49 @@
 "use strict";
-app.factory("AuthFactory", function(firebaseURL) {
-  let ref = new Firebase(firebaseURL);
-  let currentUserData = null;
 
-  return {
-    /*
-      Determine if the client is authenticated
-     */
-    isAuthenticated () {
-      let authData = ref.getAuth();
-      return (authData) ? true : false;
-    },
+app.factory("AuthFactory", function() {
+  let currentUser = null;
 
-    getUser () {
-      return currentUserData;
-    },
-
-    /*
-      Authenticate the client via Firebase
-     */
-    authenticate (credentials) {
-      return new Promise((resolve, reject) => {
-        ref.authWithPassword({
-          "email": credentials.email,
-          "password": credentials.password
-        }, (error, authData) => {
-          if (error) {
-            reject(error);
-          } else {
-            console.log("authWithPassword method completed successfully");
-            currentUserData = authData;
-            resolve(authData);
-          }
-        });
+  let createUser = function(userObj) {
+    return firebase.auth().createUserWithEmailAndPassword(userObj.email, userObj.password)
+      .catch(function(error) {
+        let errorCode = error.code;
+        let errorMessage = error.message;
+        //....
       });
-    },
-
-    /*
-      Store each Firebase user's id in the `users` collection
-     */
-    storeUser (authData) {
-      let stringifiedUser = JSON.stringify({ uid: authData.uid });
-
-      return new Promise((resolve, reject) => {
-        $http
-          .post(`${firebaseURL}/users.json`, stringifiedUser)
-          .then(
-            res => resolve(res),
-            err => reject(err)
-          );
-      });
-    }
-
   };
+
+  let loginUser = function(userObj) {
+    return firebase.auth().signInWithEmailAndPassword(userObj.email, userObj.password)
+    .catch(function(error) {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log("error", errorCode, errorMessage );
+    });
+  };
+
+  let logoutUser = function() {
+    console.log("Logging out");
+    return firebase.auth().signOut();
+  };
+
+  let isAuthenticated = function() {
+    console.log("isAuthenticated called AuthFactory");
+    return new Promise( (resolve, reject) => {
+      console.log("firing onAuthStateChanged");
+      firebase.auth().onAuthStateChanged(function(user) {
+        console.log("onAuthStateChanged finished");
+        if (user) {
+          console.log("user", user);
+          currentUser = user.uid;
+          resolve(true);
+        } else {
+          resolve(false);
+        };
+      });
+    });
+  };
+
+  let getUser = () => currentUser;
+
+  return {createUser, loginUser, logoutUser, isAuthenticated, getUser};
 });

@@ -1,27 +1,21 @@
-app.controller("ItemListCtrl", function($scope, $location, itemStorage){
-    $scope.items = [];
+"use strict";
 
-    itemStorage.getItemList().then(function(itemCollection){
-        console.log("itemCollection from promise", itemCollection);
+app.controller("ItemListCtrl", function($scope, ItemStorage, SearchTermData, AuthFactory) {
+  console.log("Hello, Item list ctrl", SearchTermData);
+  $scope.searchText = SearchTermData;
+
+  ItemStorage.getItemList(AuthFactory.getUser())
+  .then(function(itemCollection) {
+    $scope.items = itemCollection;
+  });
+
+  $scope.itemDelete = function(itemId){
+    console.log("itemId for delete", itemId);
+    ItemStorage.deleteItem(itemId)
+    .then(function(response){
+      ItemStorage.getItemList().then(function(itemCollection){
         $scope.items = itemCollection;
+      });
     });
-
-    $scope.itemDelete = function(itemId){
-        console.log("itemId", itemId);
-        itemStorage.deleteItem(itemId).then(function(response){
-            itemStorage.getItemList().then(function(itemCollection){
-                $scope.items = itemCollection;
-            });
-        });
-    };
-
-    $scope.inputChange = function(item){
-        itemStorage.updateCompletedStatus(item)
-            .then(function(response){
-                console.log(response);
-            })
-    }
-
-
-
+  };
 });

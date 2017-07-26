@@ -1,134 +1,75 @@
-app.factory("itemStorage", function($q, $http, firebaseURL, AuthFactory){
-	
-	var getItemList = function(){
-		var items = [];
-        let user = AuthFactory.getUser();
-		return $q(function(resolve, reject){
-			$http.get(`${firebaseURL}items.json?orderBy="uid"&equalTo="${user.uid}"`)
-				.success(function(itemObject){
-					var itemCollection = itemObject;
-					Object.keys(itemCollection).forEach(function(key){
-						itemCollection[key].id=key;
-						items.push(itemCollection[key]);
-					});
-					resolve(items);
-				})
-				.error(function(error){
-					reject(error);
-				});
-		});
-	};
+"use strict";
 
-	var deleteItem = function(itemId){
-		return $q(function(resolve, reject){
-			$http
-            	.delete(firebaseURL + "items/" + itemId + ".json")
-            	.success(function(objectFromFirebase){
-            		resolve(objectFromFirebase);
-            	});
-		});
-	};
+app.factory("ItemStorage", function(FirebaseURL, $q, $http) {
 
-	var postNewItem = function(newItem){
-        let user = AuthFactory.getUser();
-        console.log("user", user)
-        return $q(function(resolve, reject) {
-            $http.post(
-                firebaseURL + "items.json",
-                JSON.stringify({
-                    assignedTo: newItem.assignedTo,
-                    dependencies: newItem.dependencies,
-                    dueDate: newItem.dueDate,
-                    isCompleted: newItem.isCompleted,
-                    location: newItem.location,
-                    task: newItem.task,
-                    urgency: newItem.urgency,
-                    uid: user.uid
-                })
-            )
-            .success(
-                function(objectFromFirebase) {
-                    resolve(objectFromFirebase);
-                }
-            );
+  let getItemList = function(user) {
+    console.log("getItemList called " );
+    let items = [];
+    return $q(function(resolve, reject) {
+      $http.get(`${FirebaseURL}items.json?orderBy="uid"&equalTo="${user}"`)
+      .success(function(itemObject) {
+        let itemCollection = itemObject;
+        Object.keys(itemCollection).forEach(function(key) {
+          itemCollection[key].id=key;
+          items.push(itemCollection[key]);
         });
-	};
+        resolve(items);
+      })
+      .error(function(error) {
+        reject(error);
+      });
+    });
+  };
 
-	var getSingleItem = function(itemId){
-		return $q(function(resolve, reject){
-			$http.get(firebaseURL + "items/"+ itemId +".json")
-				.success(function(itemObject){
-					resolve(itemObject);
-				})
-				.error(function(error){
-					reject(error);
-				});
-		});
-	}
+  let getSingleItem = (itemId) => {
+    return $q(function(resolve, reject){
+      $http.get(`${FirebaseURL}items/${itemId}.json`)
+      .success(function(itemObject){
+        resolve(itemObject);
+      })
+      .error(function(error){
+        reject(error);
+      });
+    });
+  }
 
-	var updateItem = function(itemId, newItem){
-        let user = AuthFactory.getUser();
-        return $q(function(resolve, reject) {
-            $http.put(
-                firebaseURL + "items/" + itemId + ".json",
-                JSON.stringify({
-                    assignedTo: newItem.assignedTo,
-                    dependencies: newItem.dependencies,
-                    dueDate: newItem.dueDate,
-                    isCompleted: newItem.isCompleted,
-                    location: newItem.location,
-                    task: newItem.task,
-                    urgency: newItem.urgency,
-                    uid: user.uid
-                })
-            )
-            .success(
-                function(objectFromFirebase) {
-                    resolve(objectFromFirebase);
-                }
-            );
-        });
-	};
+  let postNewItem = function(newItem) {
+    return $q(function(resolve, reject) {
+      $http.post(`${FirebaseURL}items.json`,
+        angular.toJson(newItem))
+        // JSON.stringify(newItem))
+      .success(function(ObjFromFirebase) {
+        resolve(ObjFromFirebase);
+      })
+      .error(function(error) {
+        reject(error);
+      });
+    });
+  };
 
-		var updateCompletedStatus = function(newItem){
-        return $q(function(resolve, reject) {
-            $http.put(
-                firebaseURL + "items/" + newItem.id + ".json",
-                JSON.stringify({
-                    assignedTo: newItem.assignedTo,
-                    dependencies: newItem.dependencies,
-                    dueDate: newItem.dueDate,
-                    isCompleted: newItem.isCompleted,
-                    location: newItem.location,
-                    task: newItem.task,
-                    urgency: newItem.urgency
-                })
-            )
-            .success(
-                function(objectFromFirebase) {
-                    resolve(objectFromFirebase);
-                }
-            );
-        });
-	};
+  let updateItem = function(itemId, editedItem) {
+    return $q(function(resolve, reject) {
+      $http.patch(`${FirebaseURL}items/${itemId}.json`,
+        angular.toJson(editedItem))
+        // JSON.stringify(editedItem))
+      .success(function(ObjFromFirebase) {
+        resolve(ObjFromFirebase);
+      })
+      .error(function(error) {
+        reject(error);
+      });
+    });
+  }
 
+  let deleteItem = function(itemId){
+    console.log("delete in factory");
+    return $q(function(resolve, reject){
+      $http.delete(`${FirebaseURL}items/${itemId}.json`)
+      .success(function(objectFromFirebase){
+        resolve(objectFromFirebase);
+      });
+    });
+  };
 
-
-
-	return {updateCompletedStatus:updateCompletedStatus, updateItem:updateItem, getSingleItem:getSingleItem, getItemList:getItemList, deleteItem:deleteItem, postNewItem:postNewItem};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return {getItemList, getSingleItem, postNewItem, updateItem, deleteItem};
 });

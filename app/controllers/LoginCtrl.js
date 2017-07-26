@@ -1,56 +1,72 @@
 "use strict";
+// reinsert AuthFactory when written
+app.controller("LoginCtrl", function($scope, $window, AuthFactory){
 
-app.controller("LoginCtrl", function($scope, $rootScope, $location, firebaseURL, AuthFactory){
-	let ref = new Firebase(firebaseURL);
+  let logout = function() {
+    console.log("Logout clicked");
+    AuthFactory.logoutUser()
+    .then(function(data) {
+      console.log("logged out?", data );
+      $window.location.url = "#/login";
+    }, function(error) {
+      // An error happened.
+    });
+  };
 
-	// $scope.hasUser = false;
+  if(AuthFactory.isAuthenticated())
+    logout(); 
 
 	$scope.account = {
 		email: "",
 		password: ""
 	};
 
-
-	if($location.path() === "/logout"){
-		ref.unauth();
-		$rootScope.isActive = false;
-	}
-
 	$scope.register = () => {
-		console.log("you clicked register");
-		ref.createUser({
-			email: $scope.account.email,
-			password: $scope.account.password
-		}, (error, userData) => {
-			if(error){
-				console.log(`Error creating user: ${error}`)
-			} else{
-				console.log(`Created user account with uid: ${userData.uid}`)
-				$scope.login();
-			}
-		});
+    console.log("you clicked register");
+    AuthFactory.createUser({
+      email: $scope.account.email,
+      password: $scope.account.password
+    })
+    .then( (userData) => {
+      console.log("newUser", userData );
+      $scope.login();
+    }, (error) => {
+        console.log(`Error creating user: ${error}`);
+    });
+  };
+
+  $scope.login = () => {
+    console.log("you clicked login");
+    AuthFactory
+      .loginUser($scope.account)
+      .then(() => {
+        // $scope.isLoggedIn = true;
+        // console.log("logged in, really", $scope.isLoggedIn );
+        // $scope.$apply();
+
+        $window.location.href = "#/items/list";
+      });
+  };
+
+	$scope.loginGoogle = () => {
+		console.log("you clicked login with Googs");
+		AuthFactory.authWithProvider()
+		.then(function(result) {
+	    var user = result.user.uid;
+	    console.log("logged in user fer sure", user);
+	    // Load to dos?
+	    // $location.path("/");
+	    $scope.$apply();
+	  }).catch(function(error) {
+	    // Handle Errors here.
+	    var errorCode = error.code;
+	    var errorMessage = error.message;
+	    // The email of the user's account used.
+	    var email = error.email;
+	    // The firebase.auth.AuthCredential type that was used.
+	    var credential = error.credential;
+	    // ...
+	  });
 	};
 
-
-	$scope.login = () => {
-		console.log("you clicked login");
-		AuthFactory
-			.authenticate($scope.account)
-			.then(() => {
-				// $scope.hasUser = true;
-				$rootScope.isActive = true;
-				$location.path("/");
-				$scope.$apply();
-			})
-
-
-
-
-
-
-
-
-
-	};
-
-})
+});

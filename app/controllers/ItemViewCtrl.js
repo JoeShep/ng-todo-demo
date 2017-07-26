@@ -1,14 +1,15 @@
-app.controller("ItemViewCtrl", function($scope, $routeParams, itemStorage){
-    $scope.items = [];
-    $scope.selectedItem = {};
-    console.log($routeParams.itemId);
+"use strict";
 
-    itemStorage.getItemList().then(function(itemCollection){
-        console.log("itemCollection from promise", itemCollection);
-        $scope.items = itemCollection;
+app.controller("ItemViewCtrl", function($scope, $routeParams, ItemStorage, AuthFactory) {
+  $scope.items = [];
+  console.log($routeParams.itemId);
 
-        $scope.selectedItem = $scope.items.filter(function(item){
-			return item.id === $routeParams.itemId;
-		})[0];
-    });
+  ItemStorage.getItemList(AuthFactory.getUser())
+  .then(function(itemCollection) {
+    $scope.items = itemCollection;
+
+    $scope.selectedItem = $scope.items.filter(function(item){
+      return item.id === $routeParams.itemId;
+    })[0];
+  });
 });

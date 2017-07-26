@@ -1,18 +1,20 @@
-app.controller("ItemEditCtrl", function($scope, $location, $routeParams, itemStorage){
-    $scope.title = "Edit Item";
-    $scope.submitButtonText = "Update";
-    $scope.newTask = {};
+"use strict";
 
-    itemStorage.getSingleItem($routeParams.itemId)
-        .then(function successCallback(response){
-            $scope.newTask=response;
-        })
-      
-    $scope.addNewItem = function(){
-        itemStorage.updateItem($routeParams.itemId, $scope.newTask)
-            .then(function successCallback(response) {
-                console.log(response);
-                $location.url("/items/list");
-            });
-    };
+app.controller("ItemEditCtrl", function($scope, $location, $routeParams, ItemStorage){
+  $scope.title = "Edit Item";
+  $scope.btnText = "Update";
+  $scope.newTask = {};
+
+  ItemStorage.getSingleItem($routeParams.itemId)
+  .then(function successCallback(response){
+      $scope.newTask = response;
+  });
+    
+  $scope.addNewItem = function(){
+    ItemStorage.updateItem($routeParams.itemId, $scope.newTask)
+    .then(function successCallback(response) {
+      console.log(response);
+      $location.url("/items/list");
+    });
+  };
 });
