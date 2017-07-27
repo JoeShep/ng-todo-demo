@@ -3,16 +3,16 @@
 app.controller("ItemEditCtrl", function($scope, $location, $routeParams, ItemStorage){
   $scope.title = "Edit Item";
   $scope.btnText = "Update";
-  $scope.newTask = {};
+  $scope.todo = {};
 
   ItemStorage.getSingleItem($routeParams.itemId)
-  .then(function successCallback(response){
-      $scope.newTask = response;
+  .then( (response) => {
+      $scope.todo = response;
   });
-    
-  $scope.addNewItem = function(){
-    ItemStorage.updateItem($routeParams.itemId, $scope.newTask)
-    .then(function successCallback(response) {
+
+  $scope.saveTodo = function(){
+    ItemStorage.updateItem($routeParams.itemId, $scope.todo)
+    .then( (response) => {
       console.log(response);
       $location.url("/items/list");
     });

@@ -23,10 +23,10 @@
     <!-- REMOVED ng-repeat="thingy in navItems" -->
       <ul class="nav navbar-nav navbar-right">
         <!-- <li><a href="#">{{thingy.name}}</a></li> -->
-        <li ng-show="!isLoggedIn"><a ng-href="#/login">Login</a></li>
-        <li ng-show="isLoggedIn"><a ng-href="#/items/new">New Item</a></li>
-        <li ng-show="isLoggedIn"><a ng-href="#/items/list">All Items</a></li>
-        <li ng-show="isLoggedIn"><a ng-href="#/logout">Logout</a></li>
+        <li ng-show="!isLoggedIn"><a ng-href="#!/login">Login</a></li>
+        <li ng-show="isLoggedIn"><a ng-href="#!/items/new">New Item</a></li>
+        <li ng-show="isLoggedIn"><a ng-href="#!/items/list">All Items</a></li>
+        <li ng-show="isLoggedIn"><a ng-href="#!/logout">Logout</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

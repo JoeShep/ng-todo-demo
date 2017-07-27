@@ -14,7 +14,7 @@ app.controller("LoginCtrl", function($scope, $window, AuthFactory){
   };
 
   if(AuthFactory.isAuthenticated())
-    logout(); 
+    logout();
 
 	$scope.account = {
 		email: "",
@@ -44,7 +44,7 @@ app.controller("LoginCtrl", function($scope, $window, AuthFactory){
         // console.log("logged in, really", $scope.isLoggedIn );
         // $scope.$apply();
 
-        $window.location.href = "#/items/list";
+        $window.location.href = "#!/items/list";
       });
   };
 

@@ -1,12 +1,18 @@
-<h1>Todo List</h1>  
-<div ng-repeat="thingy in items | filter: searchText.search">
+<h1>Todo List</h1>
+<h2 ng-if="message">{{message}}</h2>
+<div nig-if="items" ng-repeat="thingy in items | filter: searchText.search">
   <div class="panel panel-default">
     <div class="panel-body">
-      <div class="col-xs-1"><input type="checkbox" name=""/></div>
+      <div class="col-xs-1">
+        <input
+          type="checkbox"
+          ng-model="thingy.isCompleted"
+          ng-change="updateTodoStatus(thingy)">
+      </div>
       <!-- Make item a link so we can look at it alone -->
-      <div class="col-xs-7"><a ng-href="#/items/view/{{thingy.id}}">{{thingy.task}}</a></div>
+      <div class="col-xs-7"><a ng-href="#!/items/view/{{thingy.id}}">{{thingy.task}}</a></div>
       <div class="col-xs-2">{{thingy.dueDate}}</div>
-      <div class="col-xs-1">{{thingy.assignedTo}}</div>            
+      <div class="col-xs-1">{{thingy.assignedTo}}</div>
       <div class="col-xs-1"><button class="btn btn-danger" ng-click="itemDelete(thingy.id)"><i class="fa fa-trash" aria-hidden="true"></i></button></div>
     </div>
   </div>

@@ -4,12 +4,9 @@ app.controller("ItemViewCtrl", function($scope, $routeParams, ItemStorage, AuthF
   $scope.items = [];
   console.log($routeParams.itemId);
 
-  ItemStorage.getItemList(AuthFactory.getUser())
-  .then(function(itemCollection) {
-    $scope.items = itemCollection;
-
-    $scope.selectedItem = $scope.items.filter(function(item){
-      return item.id === $routeParams.itemId;
-    })[0];
+  ItemStorage.getSingleItem($routeParams.itemId)
+  .then(function(itemData) {
+    console.log("todoItem", itemData);
+    $scope.item = itemData;
   });
 });

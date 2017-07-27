@@ -1,7 +1,7 @@
 "use strict";
 
 var app = angular.module("TodoApp", ["ngRoute"])
-.constant("FirebaseURL", "https://ng-todo-demo-4c81b.firebaseio.com/");
+.constant("FirebaseURL", "https://d20-ng-todo.firebaseio.com/");
 
 let isAuth = (AuthFactory) => new Promise( (resolve, reject) => {
   AuthFactory.isAuthenticated()
@@ -14,7 +14,7 @@ let isAuth = (AuthFactory) => new Promise( (resolve, reject) => {
       console.log("Not Authenticated user. Go away");
       reject();
     }
-  }); 
+  });
 });
 
 app.config(function($routeProvider) {
@@ -26,7 +26,7 @@ app.config(function($routeProvider) {
     when('/login', {
       templateUrl: 'partials/login.html',
       controller: "LoginCtrl"
-    }).    
+    }).
     when('/logout', {
       templateUrl: 'partials/login.html',
       controller: "LoginCtrl"
